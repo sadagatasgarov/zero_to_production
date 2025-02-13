@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  db:
+    image: sadagatasgarov/postgres-icu
+    container_name: local_pgdb_icu
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user-name
+      POSTGRES_PASSWORD: strong-password
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+
+volumes:
+  local_pgdata:
