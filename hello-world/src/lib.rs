@@ -10,7 +10,7 @@ pub async fn run() -> Result<(), std::io::Error> {
         App::new()
         .route("/health_check", web::get().to(health_check))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("127.0.0.1", 8000))?
     .run()
     .await
 }
