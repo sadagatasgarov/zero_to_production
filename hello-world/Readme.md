@@ -7,6 +7,10 @@
 cargo install --version="~0.7" sqlx-cli --no-default-features --features rustls,postgres
 ```
 
+psql yuklemek ucun
+```
+sudo apt install postgresql-client
+```
 
 Bezi dzelislerden sonra
 ```
