@@ -15,4 +15,5 @@ sudo apt install postgresql-client
 Bezi dzelislerden sonra
 ```
  SKIP_DOCKER=true ./scripts.sh/init_db.sh 
-```
+```q
+
