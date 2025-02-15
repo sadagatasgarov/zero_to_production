@@ -6,7 +6,6 @@ use sqlx::PgPool;
 use super::routes::{health_check, subscribe};
 
 pub fn run(listener: TcpListener, db_pool: PgPool) -> Result<Server, std::io::Error> {
-    
     let db_pool = web::Data::new(db_pool);
 
     let server = HttpServer::new(move || {

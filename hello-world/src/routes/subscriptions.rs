@@ -1,14 +1,10 @@
+use crate::FormData;
+use actix_web::{web, HttpResponse};
+use chrono::Utc;
 use sqlx::PgPool;
 use uuid::Uuid;
-use chrono::Utc;
-use actix_web::{web, HttpResponse};
-use crate::FormData;
 
-
-pub async fn subscribe(
-    form: web::Form<FormData>,
-    pool: web::Data<PgPool>,
-) -> HttpResponse {
+pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
     let netice = sqlx::query!(
         r#"
             INSERT INTO subscriptions (id, email, name, subscribed_at) 
@@ -17,7 +13,7 @@ pub async fn subscribe(
         Uuid::new_v4(),
         form.email,
         form.name,
-        Utc::now()    
+        Utc::now()
     )
     .execute(pool.get_ref())
     .await;
@@ -27,6 +23,6 @@ pub async fn subscribe(
         Err(e) => {
             println!("failed to execute query: {}", e);
             HttpResponse::InternalServerError().finish()
-        },
+        }
     }
 }
