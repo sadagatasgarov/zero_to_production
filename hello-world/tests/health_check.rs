@@ -42,7 +42,9 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .expect("Failet to connect to Postgress");
 
     let client = reqwest::Client::new();
-    let body = "name=Sadagat%20Asgarov&email=sadagat.asgarov%40gmail.com";
+    let body = "name=Sadagat%20Asgarov&email=sadagatasgarov%40gmail.com";
+
+    
     let response = client
         .post(&format!("{}/subscriptions", &app_address))
         .header("Content-Type", "application/x-www-form-urlencoded")
@@ -53,12 +55,9 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
 
     assert_eq!(200, response.status().as_u16());
 
-    let saved = sqlx::query!("SELECT email, name FROM subscriptions",)
-        .fetch_one(&mut connection)
-        .await
-        .expect("Failed to fetch saved subscriptions");
+    let saved = sqlx::query!("SELECT email, name FROM subscriptions",).fetch_one(&mut connection).await.expect("Failed to fetch saved subscriptions");
 
-    assert_eq!(saved.email, "sadagat.asgarov@gmail.com");
+    assert_eq!(saved.email, "sadagatasgarov@gmail.com");
 }
 
 #[tokio::test]
