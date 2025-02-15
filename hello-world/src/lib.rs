@@ -2,7 +2,7 @@ use std::net::TcpListener;
 
 use actix_web::{dev::Server, web, App, HttpResponse, HttpServer, Responder};
 
-mod configuration;
+pub mod configuration;
 mod routes;
 mod startup;
 
