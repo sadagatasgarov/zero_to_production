@@ -4,7 +4,7 @@ use actix_web::{dev::Server, web, App, HttpResponse, HttpServer, Responder};
 
 pub mod configuration;
 mod routes;
-mod startup;
+pub mod startup;
 
 #[derive(serde::Deserialize)]
 struct FormData {
