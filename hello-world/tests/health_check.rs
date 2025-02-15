@@ -1,5 +1,8 @@
 use std::net::TcpListener;
 
+use sqlx::{Connection, PgConnection};
+use zero2prod::configuration::get_configuration;
+
 #[tokio::test]
 async fn health_check_works() {
     spawn_app();
@@ -30,8 +33,15 @@ fn spawn_app() -> String {
 #[tokio::test]
 async fn subscribe_returns_a_200_for_valid_form_data() {
     let app_address = spawn_app();
-    let client = reqwest::Client::new();
 
+    let configuration = get_configuration().expect("Failet to read configuration");
+    let connection_string = configuration.database.connection_string();
+
+    let connection = PgConnection::connect(&connection_string)
+        .await
+        .expect("Failet to connect to Postgress");
+
+    let client = reqwest::Client::new();
     let body = "name=Sadagat%20Asgarov&email=sadagat.asgarov%40gmail.com";
     let response = client
         .post(&format!("{}/subscriptions", &app_address))

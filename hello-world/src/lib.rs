@@ -6,14 +6,11 @@ pub mod configuration;
 mod routes;
 mod startup;
 
-
 #[derive(serde::Deserialize)]
-struct FormData{
+struct FormData {
     email: String,
-    name: String
+    name: String,
 }
-
-
 
 async fn health_check() -> impl Responder {
     HttpResponse::Ok().finish()
