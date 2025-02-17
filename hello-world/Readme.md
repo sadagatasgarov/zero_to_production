@@ -17,3 +17,4 @@ Bezi dzelislerden sonra
  SKIP_DOCKER=true ./scripts.sh/init_db.sh 
 ```q
 
+RUST_LOG=debug cargo run
