@@ -15,7 +15,6 @@ pub struct TestApp {
 //         let mut connection = PgConnection::connect(&connection_string)
 //             .await
 //             .expect("Failed to connect to Postgres");
-
 //         sqlx::query(&format!(
 //             r#"DROP DATABASE "{}" WITH (FORCE);"#,
 //             database_name
