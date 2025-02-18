@@ -19,7 +19,6 @@ pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
 
     let query_span = tracing::info_span!("saving new subscriber details in the database");
 
-
     let netice = sqlx::query!(
         r#"
             INSERT INTO subscriptions (id, email, name, subscribed_at) 
@@ -42,11 +41,9 @@ pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> Ht
         }
 
         Err(e) => {
-            log::error!("Failed to execute query: {:?}",e);
+            log::error!("Failed to execute query: {:?}", e);
             println!("failed to execute query: {}", e);
             HttpResponse::InternalServerError().finish()
         }
     }
-
-
 }
