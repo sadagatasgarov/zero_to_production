@@ -18,3 +18,9 @@ Bezi dzelislerden sonra
 ```q
 
 RUST_LOG=debug cargo run
+
+
+
+cargo install bunyan
+
+TEST_LOG=true cargo test health_check_works | bunyan
