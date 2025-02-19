@@ -3430,6 +3430,7 @@ dependencies = [
  "chrono",
  "config",
  "log",
+ "once_cell",
  "reqwest",
  "serde",
  "sqlx",

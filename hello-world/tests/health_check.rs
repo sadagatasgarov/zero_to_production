@@ -1,9 +1,16 @@
+use once_cell::sync::Lazy;
 use sqlx::Executor;
 use sqlx::{Connection, PgConnection, PgPool};
+use zero2prod::telemetry::{get_subscriber, init_subscriber};
 use std::net::TcpListener;
 use uuid::Uuid;
 use zero2prod::configuration::get_configuration;
 use zero2prod::{configuration::DatabaseSettings, startup::run};
+
+static TRACING: Lazy<()> = Lazy::new(||{
+    let subscriber = get_subscriber("test".into(), "debug".into());
+    init_subscriber(subscriber);
+});
 
 pub struct TestApp {
     pub address: String,
@@ -42,6 +49,7 @@ async fn health_check_works() {
 }
 
 async fn spawn_app() -> TestApp {
+    Lazy::force(&TRACING);    
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind address");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
