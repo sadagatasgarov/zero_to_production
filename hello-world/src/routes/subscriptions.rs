@@ -5,45 +5,52 @@ use sqlx::PgPool;
 use tracing::Instrument;
 use uuid::Uuid;
 
+
+
+#[
+    tracing::instrument(
+        name = "Adding a new subscriber",
+        skip(form, pool),
+        fields(
+            request_id = %Uuid::new_v4(),
+            subscriber_email = %form.email,
+            subscriber_name = %form.name
+        )
+
+    )
+]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let request_id = Uuid::new_v4();
+  match insert_subscriber(&pool, &form).await {
+        Ok(_) => HttpResponse::Ok().finish(),
 
-    let request_span = tracing::info_span!(
-        "Adding a new subscriber.",
-        %request_id,
-        subscriber_email = %form.email,
-        subscriber_name = %form.name
-    );
+        Err(e) => {
+            tracing::error!("Failed to execute query: {:?}", e);
+            HttpResponse::InternalServerError().finish()
+        }
+    }
+}
 
-    let _request_span_guard = request_span.enter();
 
-    let query_span = tracing::info_span!("saving new subscriber details in the database");
+pub async fn insert_subscriber(
+    pool: &PgPool,
+    form: &FormData,
+) -> Result<(), sqlx::Error> {
 
-    let netice = sqlx::query!(
+    sqlx::query!(
         r#"
             INSERT INTO subscriptions (id, email, name, subscribed_at) 
             VALUES ($1, $2, $3, $4);
         "#,
-        request_id,
+        Uuid::new_v4(),
         form.email,
         form.name,
         Utc::now()
     )
-    .execute(pool.get_ref())
-    .instrument(query_span)
-    .await;
-
-    match netice {
-        Ok(_) => {
-            log::info!("New subscriber details heve been saved");
-
-            HttpResponse::Ok().finish()
-        }
-
-        Err(e) => {
-            log::error!("Failed to execute query: {:?}", e);
-            println!("failed to execute query: {}", e);
-            HttpResponse::InternalServerError().finish()
-        }
-    }
+    .execute(pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Failed execute query: {:?}", e);
+        e
+    })?;
+    Ok(())
 }
