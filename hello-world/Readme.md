@@ -42,3 +42,6 @@ directory = "vendor"
 ```
 docker build --tag zero2prod --file Dockerfile .
 ```
+
+
+docker run -p8000:8000 --network=host  zero2prod
