@@ -20,7 +20,18 @@ Bezi dzelislerden sonra
 RUST_LOG=debug cargo run
 
 
-
+```
 cargo install bunyan
 
 TEST_LOG=true cargo test health_check_works | bunyan
+```
+
+```
+To use vendored sources, add this to your .cargo/config.toml for this project:
+
+[source.crates-io]
+replace-with = "vendored-sources"
+
+[source.vendored-sources]
+directory = "vendor"
+```
