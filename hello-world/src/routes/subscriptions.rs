@@ -9,10 +9,9 @@ use uuid::Uuid;
 
 #[
     tracing::instrument(
-        name = "Adding a new subscriber",
+        name = "Adding a new subscriberlllllllllllllllllllllllllllllllll",
         skip(form, pool),
         fields(
-            request_id = %Uuid::new_v4(),
             subscriber_email = %form.email,
             subscriber_name = %form.name
         )
