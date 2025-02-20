@@ -26,6 +26,8 @@ cargo install bunyan
 TEST_LOG=true cargo test health_check_works | bunyan
 ```
 
+
+cargo vendor ile asililiqlari cixartdim
 ```
 To use vendored sources, add this to your .cargo/config.toml for this project:
 
@@ -34,4 +36,9 @@ replace-with = "vendored-sources"
 
 [source.vendored-sources]
 directory = "vendor"
+```
+
+
+```
+docker build --tag zero2prod --file Dockerfile .
 ```

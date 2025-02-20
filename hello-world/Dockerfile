@@ -1,9 +1,13 @@
-FROM postgres:17.2
+FROM rust:1.84.1
 
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    && rm -rf /var/lib/apt/lists/*
 
-ENV PG_ICU_LOCALE en-US
+WORKDIR /app
 
-CMD ["postgres"]
+RUN apt update && apt install lld clang -y
+
+COPY . .
+
+ENV SQLX_OFFLINE=true
+RUN cargo build --release
+
+ENTRYPOINT [ "./target/release/zero2prod" ]
