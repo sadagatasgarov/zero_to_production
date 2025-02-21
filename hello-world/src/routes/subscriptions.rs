@@ -19,36 +19,21 @@ use uuid::Uuid;
     )
 ]
 pub async fn subscribe(form: web::Form<FormData>, pool: web::Data<PgPool>) -> HttpResponse {
-    let new_subscriber = NewSubscriber {
-        email: form.0.email,
-        name: SubscriberName::parse(form.0.name),
+    let name = match SubscriberName::parse(form.0.name) {
+        Ok(n) => n,
+        Err(_) => return HttpResponse::BadRequest().finish(),
     };
 
-    // if !is_valid_name(&form.name) {
-    //     HttpResponse::BadRequest().finish();
-    // }
+    let new_subscriber = NewSubscriber {
+        email: form.0.email,
+        name,
+    };
 
     match insert_subscriber(&pool, &new_subscriber).await {
         Ok(_) => HttpResponse::Ok().finish(),
-
-        Err(e) => {
-            tracing::error!("Failed to execute query: {:?}", e);
-            HttpResponse::InternalServerError().finish()
-        }
+        Err(_) => HttpResponse::InternalServerError().finish(),
     }
 }
-
-// pub fn is_valid_name(s: &str) -> bool {
-//     let empty_or_whitspace = s.trim().is_empty();
-//     let is_too_long = s.graphemes(true).count() > 256;
-//     let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
-
-//     let contain_forbidden_characters = s.chars().any(|x|{
-//         forbidden_characters.contains(&x)
-//     });
-
-//     !(empty_or_whitspace || is_too_long || contain_forbidden_characters)
-// }
 
 #[tracing::instrument(
     name = "Saving new subscriber details in the database",
@@ -65,7 +50,7 @@ pub async fn insert_subscriber(
         "#,
         Uuid::new_v4(),
         new_subscriber.email,
-        new_subscriber.name.inner_ref(),
+        new_subscriber.name.as_ref(),
         Utc::now()
     )
     .execute(pool)
