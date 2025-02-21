@@ -4,7 +4,7 @@ pub struct NewSubscriber {
     pub email: String,
     pub name: SubscriberName,
 }
-pub struct SubscriberName(pub String);
+pub struct SubscriberName(String);
 
 impl SubscriberName {
     pub fn parse(s: String) -> SubscriberName {
