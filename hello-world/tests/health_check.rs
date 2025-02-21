@@ -1,5 +1,4 @@
 use once_cell::sync::Lazy;
-use secrecy::ExposeSecret;
 use sqlx::Executor;
 use sqlx::{Connection, PgConnection, PgPool};
 use std::net::TcpListener;
@@ -79,7 +78,7 @@ async fn spawn_app() -> TestApp {
 }
 
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
-    let mut connection = PgConnection::connect(&config.connection_string_without_db().expose_secret())
+    let mut connection = PgConnection::connect_with(&config.without_db())
         .await
         .expect("Failed to connect Postgres");
 
@@ -88,7 +87,7 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .await
         .expect("Failed to create Database");
 
-    let connection_pool = PgPool::connect(&config.connection_string().expose_secret())
+    let connection_pool = PgPool::connect_with(config.with_db())
         .await
         .expect("Failed to connect postgres test");
 
@@ -148,5 +147,35 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
             "The API did not fail with 400 Bad request whwn the payload was {}",
             error_message
         )
+    }
+}
+
+#[tokio::test]
+async fn subscribe_returns_a_200_when_fields_are_present_but_empty() {
+    // Arrange
+    let app = spawn_app().await;
+    let client = reqwest::Client::new();
+    let test_cases = vec![
+        ("name=&email=sadagat.asgarov%40gmail.com", "empty name"),
+        ("name=Sadagat&email=", "empty email"),
+        ("name=Sadagat&email=definitely-not-an-email", "invalid email"),
+    ];
+
+    for (body, description) in test_cases {
+        // Act
+        let response = client
+            .post(&format!("{}/subscriptions", &app.address))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+            .send()
+            .await
+            .expect("Failed to execute request.");
+        // Assert
+        assert_eq!(
+            200,
+            response.status().as_u16(),
+            "The API did not return a 200 OK when the payload was {}.",
+            description
+        );
     }
 }

@@ -17,10 +17,12 @@ pub async fn main() -> Result<(), std::io::Error> {
     //     .await
     //     .expect("Failed to connect to Postgres.");
 
-    let connextion_pool = PgPool::connect_lazy(&configuration.database.connection_string().expose_secret())
-        .expect("Failed to connect to Postgres");
+    let connextion_pool = PgPool::connect_lazy_with(configuration.database.with_db());
 
-    let address = format!("{}:{}",configuration.application.host , configuration.application.port);
+    let address = format!(
+        "{}:{}",
+        configuration.application.host, configuration.application.port
+    );
 
     let listener = TcpListener::bind(address)?;
     println!("{:?}", listener);
