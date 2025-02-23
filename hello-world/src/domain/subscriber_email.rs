@@ -28,6 +28,22 @@ mod tests {
     use fake::faker::internet::en::SafeEmail;
     use fake::Fake;
 
+    
+    
+    // Both `Clone` and `Debug` are required by `quickcheck`
+    #[derive(Debug, Clone)]
+    struct ValidEmailFixture(pub String);
+    impl quickcheck::Arbitrary for ValidEmailFixture {
+        fn arbitrary<G: quickcheck::Gen>(g: &mut G) -> Self {
+            let email = SafeEmail().fake_with_rng(g);
+            Self(email)
+        }
+    }
+    #[quickcheck_macros::quickcheck]
+    fn valid_emails_are_parsed_successfully(valid_email: ValidEmailFixture) -> bool {
+        SubscriberEmail::parse(valid_email.0).is_ok()
+    }
+
     #[test]
     fn empty_string_is_rejected() {
         let email = "".to_string();
@@ -44,10 +60,9 @@ mod tests {
         assert_err!(SubscriberEmail::parse(email));
     }
 
-    #[test]
-    fn valid_emails_are_parsed_successfully() {
-        let email = SafeEmail().fake();
-        claims::assert_ok!(SubscriberEmail::parse(email));
-    }
-
+    // #[test]
+    // fn valid_emails_are_parsed_successfully() {
+    //     let email = SafeEmail().fake();
+    //     claims::assert_ok!(SubscriberEmail::parse(email));
+    // }
 }
