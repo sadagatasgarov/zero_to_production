@@ -1,10 +1,10 @@
 use once_cell::sync::Lazy;
 use sqlx::Executor;
 use sqlx::{Connection, PgConnection, PgPool};
-use zero2prod::email_client::EmailClient;
 use std::net::TcpListener;
 use uuid::Uuid;
 use zero2prod::configuration::get_configuration;
+use zero2prod::email_client::EmailClient;
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
 use zero2prod::{configuration::DatabaseSettings, startup::run};
 
@@ -75,7 +75,8 @@ async fn spawn_app() -> TestApp {
         .expect("Invalid sender email address.");
     let email_client = EmailClient::new(configuration.email_client.base_url, sender_email);
 
-    let server = run(listener, connection_pool.clone(), email_client).expect("failed to bind address");
+    let server =
+        run(listener, connection_pool.clone(), email_client).expect("failed to bind address");
 
     let _ = tokio::spawn(server);
 
