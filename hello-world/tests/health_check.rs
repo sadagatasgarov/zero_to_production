@@ -1,6 +1,7 @@
 use once_cell::sync::Lazy;
 use sqlx::Executor;
 use sqlx::{Connection, PgConnection, PgPool};
+use zero2prod::email_client::EmailClient;
 use std::net::TcpListener;
 use uuid::Uuid;
 use zero2prod::configuration::get_configuration;
@@ -67,7 +68,14 @@ async fn spawn_app() -> TestApp {
 
     let connection_pool = configure_database(&configuration.database).await;
 
-    let server = run(listener, connection_pool.clone()).expect("failed to bind address");
+    // Build an `EmailClient` using `configuration`
+    let sender_email = configuration
+        .email_client
+        .sender()
+        .expect("Invalid sender email address.");
+    let email_client = EmailClient::new(configuration.email_client.base_url, sender_email);
+
+    let server = run(listener, connection_pool.clone(), email_client).expect("failed to bind address");
 
     let _ = tokio::spawn(server);
 
@@ -149,39 +157,6 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
         )
     }
 }
-
-// #[tokio::test]
-// async fn subscribe_returns_a_200_when_fields_are_present_but_empty() {
-//     // Arrange
-//     let app = spawn_app().await;
-//     let client = reqwest::Client::new();
-//     let test_cases = vec![
-//         ("name=&email=sadagat.asgarov%40gmail.com", "empty name"),
-//         ("name=Sadagat&email=", "empty email"),
-//         (
-//             "name=Sadagat&email=definitely-not-an-email",
-//             "invalid email",
-//         ),
-//     ];
-
-//     for (body, description) in test_cases {
-//         // Act
-//         let response = client
-//             .post(&format!("{}/subscriptions", &app.address))
-//             .header("Content-Type", "application/x-www-form-urlencoded")
-//             .body(body)
-//             .send()
-//             .await
-//             .expect("Failed to execute request.");
-//         // Assert
-//         assert_eq!(
-//             200,
-//             response.status().as_u16(),
-//             "The API did not return a 200 OK when the payload was {}.",
-//             description
-//         );
-//     }
-// }
 
 #[tokio::test]
 // Renamed!
