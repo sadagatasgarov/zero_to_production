@@ -12,7 +12,6 @@ pub struct Settings {
     pub email_client: EmailClientSettings,
 }
 
-
 #[derive(serde::Deserialize)]
 pub struct ApplicationSettings {
     pub host: String,
@@ -58,11 +57,11 @@ impl DatabaseSettings {
     }
 }
 
-
 #[derive(serde::Deserialize)]
 pub struct EmailClientSettings {
     pub base_url: String,
     pub sender_email: String,
+    pub authorization_token: Secret<String>,
 }
 
 impl EmailClientSettings {
@@ -70,7 +69,6 @@ impl EmailClientSettings {
         SubscriberEmail::parse(self.sender_email.clone())
     }
 }
-
 
 pub enum Environment {
     Local,
@@ -101,7 +99,6 @@ impl TryFrom<String> for Environment {
         }
     }
 }
-
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let base_path = std::env::current_dir().expect("Failed to determine the current directory");

@@ -16,8 +16,6 @@ impl TryFrom<FormData> for NewSubscriber {
     }
 }
 
-
-
 #[
     tracing::instrument(
         name = "Adding a new subscriberlllllllllllllllllllllllllllllllll",

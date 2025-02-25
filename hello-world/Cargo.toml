@@ -35,7 +35,8 @@ quickcheck_macros = "0.9.1"
 reqwest = "*"
 once_cell="1"
 fake = "~2.3"
-
+tokio = { version = "1", features = ["rt", "macros"] }
+wiremock = "0.5"
 
 
 [dependencies.reqwest]
