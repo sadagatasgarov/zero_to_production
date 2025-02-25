@@ -6,4 +6,6 @@ email_client:
 # Value retrieved from Postmark's API documentation
   base_url: "https://api.postmarkapp.com"
 # Use the single sender email you authorised on Postmark!
-  sender_email: "something@gmail.com"
+  sender_email: "pagagoly@asciibinder.net"
+  authorization_token: "6cdf6768-4b98-49c5-9cbb-13428b246cc2n"
+  timeout_milliseconds: 10000
