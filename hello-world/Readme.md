@@ -51,3 +51,8 @@ docker run -p8000:8000 --network=host  zero2prod
 
 
 ulimit -n 10000
+
+
+
+7.6.4.1
+Step 1: Add As Optional
