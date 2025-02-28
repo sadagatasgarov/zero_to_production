@@ -59,5 +59,4 @@ mod tests {
         let email = "@asgarov.com".to_string();
         assert_err!(SubscriberEmail::parse(email));
     }
-
 }
