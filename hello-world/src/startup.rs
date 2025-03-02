@@ -47,7 +47,12 @@ impl Application {
 
         let port = listener.local_addr().unwrap().port();
 
-        let server = run(listener, connection_pool, email_client, configuration.application.base_url)?;
+        let server = run(
+            listener,
+            connection_pool,
+            email_client,
+            configuration.application.base_url,
+        )?;
         // We "save" the bound port in one of `Application`'s fields
         Ok(Self { port, server })
     }
@@ -66,7 +71,6 @@ pub fn get_connection_pool(configuration: &DatabaseSettings) -> PgPool {
 }
 
 pub struct ApplicationBaseUrl(pub String);
-
 
 pub fn run(
     listener: TcpListener,

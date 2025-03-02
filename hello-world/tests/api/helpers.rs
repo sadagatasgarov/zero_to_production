@@ -73,7 +73,7 @@ pub async fn spawn_app() -> TestApp {
         address: address,
         db_pool: get_connection_pool(&configuration.database),
         email_server,
-        port: application_port
+        port: application_port,
     }
 }
 

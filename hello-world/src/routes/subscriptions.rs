@@ -93,7 +93,7 @@ pub async fn send_confirmation_email(
     let confirmation_link = format!(
         "{}/subscriptions/confirm?subscription_token=mytoken",
         base_url
-        );
+    );
     let plain_body = format!(
         "Welcome to our newsletter!\nVisit {} to confirm your subscription.",
         confirmation_link
