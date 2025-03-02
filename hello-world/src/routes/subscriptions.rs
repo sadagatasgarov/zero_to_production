@@ -89,7 +89,11 @@ pub async fn send_confirmation_email(
     base_url: &str,
 ) -> Result<(), reqwest::Error> {
     //let confirmation_link = "https://there-is-no-such-domaiggn.com/subscriptions/confirm";
-    let confirmation_link = format!("{}/subscriptions/confirm", base_url);
+    //let confirmation_link = format!("{}/subscriptions/confirm", base_url);
+    let confirmation_link = format!(
+        "{}/subscriptions/confirm?subscription_token=mytoken",
+        base_url
+        );
     let plain_body = format!(
         "Welcome to our newsletter!\nVisit {} to confirm your subscription.",
         confirmation_link
