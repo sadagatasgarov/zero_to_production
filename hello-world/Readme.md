@@ -57,4 +57,4 @@ ulimit -n 10000
 
 776baslayacam
 
-316
+304 seh
