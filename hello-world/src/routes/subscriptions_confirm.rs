@@ -8,3 +8,4 @@ pub struct Parameters {
 pub async fn confirm(_parameters: web::Query<Parameters>) -> HttpResponse {
     HttpResponse::Ok().finish()
 }
+
