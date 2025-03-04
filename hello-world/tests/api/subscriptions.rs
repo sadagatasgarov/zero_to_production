@@ -46,7 +46,7 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
     let app = spawn_app().await;
     let test_cases = vec![
         ("name=Sadagat%20Asgarov", "missing the email"),
-        ("email=sadagat.asgarov@gmail.com", "missing the name"),
+        ("email=sadagatasgarov@gmail.com", "missing the name"),
         ("", "missing both name and email"),
     ];
 
@@ -68,7 +68,7 @@ async fn subscribe_returns_a_400_when_fields_are_present_but_invalid() {
     // Arrange
     let app = spawn_app().await;
     let test_cases = vec![
-        ("name=&email=sadagat.asgarov%40gmail.com", "empty name"),
+        ("name=&email=sadagatasgarov%40gmail.com", "empty name"),
         ("name=Sadagat&email=", "empty email"),
         (
             "name=Sadagat&email=definitely-not-an-email",
@@ -94,7 +94,7 @@ async fn subscribe_returns_a_400_when_fields_are_present_but_invalid() {
 async fn subscribe_sends_a_confirmation_email_for_valid_data() {
     // Arrange
     let app = spawn_app().await;
-    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+    let body = "name=Sadagat%20Asgarov&email=sadagatasgarov@gmail.com";
     Mock::given(path("/email"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200))
@@ -111,7 +111,7 @@ async fn subscribe_sends_a_confirmation_email_for_valid_data() {
 async fn subscribe_sends_a_confirmation_email_with_a_link() {
     // Arrange
     let app = spawn_app().await;
-    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+    let body = "name=Sadagat%20Asgarov&email=sadagatasgarov%40gmail.com";
     Mock::given(path("/email"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200))
