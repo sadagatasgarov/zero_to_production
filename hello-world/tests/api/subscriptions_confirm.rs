@@ -27,7 +27,7 @@ async fn the_link_returned_by_subscribe_returns_a_200_if_called() {
         .await;
     app.post_subscriptions(body.into()).await;
     let email_request = &app.email_server.received_requests().await.unwrap()[0];
-    println!("---------------dddddddddddddddddddd {:?}", email_request);
+    //println!("---------------dddddddddddddddddddd {:?}", email_request);
     let body: serde_json::Value = serde_json::from_slice(&email_request.body).unwrap();
     // Extract the link from one of the request fields.
     let get_link = |s: &str| {
@@ -65,6 +65,7 @@ async fn clicking_on_the_confirmation_link_confirms_a_subscriber() {
     app.post_subscriptions(body.into()).await;
     let email_request = &app.email_server.received_requests().await.unwrap()[0];
     let confirmation_links = app.get_confirmation_links(&email_request);
+    
     // Act
     reqwest::get(confirmation_links.html)
         .await
