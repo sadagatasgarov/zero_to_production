@@ -52,9 +52,10 @@ docker run -p8000:8000 --network=host  zero2prod
 
 ulimit -n 10000
 
+cargo test -- --nocapture
 
 
+7.7.6 Subscription tokens
 
-776baslayacam
 
 304 seh
