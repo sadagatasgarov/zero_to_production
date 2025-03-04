@@ -11,9 +11,6 @@ use rand::{thread_rng, Rng};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
-
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
     fn try_from(value: FormData) -> Result<Self, Self::Error> {
@@ -163,26 +160,5 @@ Click <a href=\"{}\">here</a> to confirm your subscription.",
 }
 
 
-#[tracing::instrument(
-    name = "Store subscription token in the database",
-    skip(subscription_token, pool)
-)]
-pub async fn store_token(
-    pool: &PgPool,
-    subscriber_id: Uuid,
-    subscription_token: &str,
-) -> Result<(), sqlx::Error> {
-    sqlx::query!(
-        r#"INSERT INTO subscription_tokens (subscription_token, subscriber_id)
-    VALUES ($1, $2)"#,
-        subscription_token,
-        subscriber_id
-    )
-    .execute(pool)
-    .await
-    .map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-        e
-    })?;
-    Ok(())
-}
+
+
