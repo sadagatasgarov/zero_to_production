@@ -11,6 +11,9 @@ use rand::{thread_rng, Rng};
 use sqlx::PgPool;
 use uuid::Uuid;
 
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng};
+
 impl TryFrom<FormData> for NewSubscriber {
     type Error = String;
     fn try_from(value: FormData) -> Result<Self, Self::Error> {
@@ -54,6 +57,7 @@ pub async fn subscribe(
         Ok(subscriber_id) => subscriber_id,
         Err(_) => return HttpResponse::InternalServerError().finish(),
     };
+
     let subscription_token = generate_subscription_token();
 
     if store_token(&pool, subscriber_id, &subscription_token).await.is_err() {
@@ -68,10 +72,35 @@ pub async fn subscribe(
     )
     .await
     .is_err()
+
     {
         return HttpResponse::InternalServerError().finish();
     }
     HttpResponse::Ok().finish()
+}
+
+#[tracing::instrument(
+    name = "Store subscription token in the database",
+    skip(subscription_token, pool)
+)]
+pub async fn store_token(
+    pool: &PgPool,
+    subscriber_id: Uuid,
+    subscription_token: &str,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        r#"INSERT INTO subscription_tokens (subscription_token, subscriber_id)
+    VALUES ($1, $2)"#,
+        subscription_token,
+        subscriber_id
+    )
+    .execute(pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Failed to execute query: {:?}", e);
+        e
+    })?;
+    Ok(())
 }
 
 #[tracing::instrument(
@@ -132,6 +161,7 @@ Click <a href=\"{}\">here</a> to confirm your subscription.",
         .send_email(new_subscriber.email, "Welcome!", &html_body, &plain_body)
         .await
 }
+
 
 #[tracing::instrument(
     name = "Store subscription token in the database",

@@ -56,6 +56,7 @@ async fn clicking_on_the_confirmation_link_confirms_a_subscriber() {
     // Arrange
     let app = spawn_app().await;
     let body = "name=Sadagat%20Asgarov&email=sadagatasgarov%40gmail.com";
+
     Mock::given(path("/email"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200))
