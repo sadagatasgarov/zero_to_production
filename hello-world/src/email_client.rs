@@ -45,8 +45,6 @@ impl EmailClient {
             text_body: text_content,
         };
 
-        let builder = self.http_client.post(&url).json(&request_body);
-
         let builder = self
             .http_client
             .post(&url)
