@@ -56,4 +56,3 @@ WHERE subscription_token = $1",
     })?;
     Ok(result.map(|r| r.subscriber_id))
 }
-
