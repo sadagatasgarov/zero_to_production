@@ -27,6 +27,7 @@ TEST_LOG=true cargo test health_check_works | bunyan
 ```
 
 
+
 cargo vendor ile asililiqlari cixartdim
 ```
 To use vendored sources, add this to your .cargo/config.toml for this project:
@@ -45,6 +46,7 @@ docker build --tag zero2prod --file Dockerfile .
 
 
 docker run -p8000:8000 --network=host  zero2prod
+
 
 
 
