@@ -19,15 +19,11 @@ Bezi dzelislerden sonra
 
 RUST_LOG=debug cargo run
 
-
 ```
 cargo install bunyan
 
 TEST_LOG=true cargo test health_check_works | bunyan
 ```
-
-
-
 cargo vendor ile asililiqlari cixartdim
 ```
 To use vendored sources, add this to your .cargo/config.toml for this project:
@@ -48,10 +44,6 @@ docker build --tag zero2prod --file Dockerfile .
 docker run -p8000:8000 --network=host  zero2prod
 
 
-
-
-
-
 ulimit -n 10000
 
 cargo test -- --nocapture
@@ -60,3 +52,11 @@ cargo test -- --nocapture
 7.8
 315
 Database Transactions
+
+
+# sqlx logs are a bit spammy, cutting them out to reduce noise
+```
+export RUST_LOG="sqlx=error,info"
+export TEST_LOG=true
+cargo t subscribe_fails_if_there_is_a_fatal_database_error | bunyan
+```
