@@ -58,6 +58,7 @@ impl EmailClient {
             .error_for_status()?;
 
         Ok(())
+        
     }
 }
 
