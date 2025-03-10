@@ -49,9 +49,8 @@ ulimit -n 10000
 cargo test -- --nocapture
 
 
-7.8
-315
-Database Transactions
+8.4.2
+anyhow Or thiserror?
 
 
 # sqlx logs are a bit spammy, cutting them out to reduce noise
