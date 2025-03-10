@@ -47,6 +47,7 @@ impl ResponseError for StoreTokenError {}
 pub enum SubscribeError {
     #[error("{0}")]
     ValidationError(String),
+    
     #[error(transparent)]
     UnexpectedError(#[from] anyhow::Error),
 }
@@ -157,6 +158,7 @@ pub async fn store_token(
     transaction.execute(query).await.map_err(|e| {
         // [...]
         // Wrapping the underlying error
+        tracing::error!("Failed to execute query: {:?}", e);
         StoreTokenError(e)
     })?;
     Ok(())
