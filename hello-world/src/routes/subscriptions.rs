@@ -8,6 +8,7 @@ use actix_web::{web, HttpResponse, ResponseError};
 use chrono::Utc;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
+use reqwest::StatusCode;
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -55,7 +56,16 @@ impl std::fmt::Display for SubscribeError {
 }
 
 impl std::error::Error for SubscribeError {}
-impl ResponseError for SubscribeError {}
+impl ResponseError for SubscribeError {
+    fn status_code(&self) -> StatusCode {
+        match self {
+            SubscribeError::ValidationError(_) => StatusCode::BAD_REQUEST,
+            SubscribeError::DatabaseError(_)
+            | SubscribeError::StoreTokenError(_)
+            | SubscribeError::SendEmailError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        }
+    }
+}
 
 impl From<reqwest::Error> for SubscribeError {
     fn from(e: reqwest::Error) -> Self {
@@ -217,5 +227,3 @@ Click <a href=\"{}\">here</a> to confirm your subscription.",
         .send_email(new_subscriber.email, "Welcome!", &html_body, &plain_body)
         .await
 }
-
-
