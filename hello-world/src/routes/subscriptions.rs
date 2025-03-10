@@ -4,7 +4,7 @@ use crate::{
     domain::{NewSubscriber, SubscriberEmail, SubscriberName},
     FormData,
 };
-use actix_web::{web, HttpResponse};
+use actix_web::{web, HttpResponse, ResponseError};
 use chrono::Utc;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
@@ -21,6 +21,22 @@ impl TryFrom<FormData> for NewSubscriber {
         Ok(Self { email, name })
     }
 }
+
+#[derive(Debug)]
+pub struct StoreTokenError(sqlx::Error);
+
+impl std::fmt::Display for StoreTokenError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "A database error was encountered while \
+            trying to store a subscription token."
+        )
+    }
+}
+
+// impl ResponseError for sqlx::Error {}
+impl ResponseError for StoreTokenError {}
 
 fn generate_subscription_token() -> String {
     let mut rng = thread_rng();
@@ -46,33 +62,28 @@ pub async fn subscribe(
     pool: web::Data<PgPool>,
     email_client: web::Data<EmailClient>,
     base_url: web::Data<ApplicationBaseUrl>,
-) -> HttpResponse {
+) -> Result<HttpResponse, actix_web::Error> {
     let new_subscriber = match form.0.try_into() {
         Ok(subscriber) => subscriber,
-        Err(_) => return HttpResponse::BadRequest().finish(),
+        Err(_) => return Ok(HttpResponse::BadRequest().finish()),
     };
 
     let mut transaction = match pool.begin().await {
         Ok(transaction) => transaction,
-        Err(_) => return HttpResponse::InternalServerError().finish(),
+        Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
     };
 
     let subscriber_id = match insert_subscriber(&mut transaction, &new_subscriber).await {
         Ok(subscriber_id) => subscriber_id,
-        Err(_) => return HttpResponse::InternalServerError().finish(),
+        Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
     };
 
     let subscription_token = generate_subscription_token();
 
-    if store_token(&mut transaction, subscriber_id, &subscription_token)
-        .await
-        .is_err()
-    {
-        return HttpResponse::InternalServerError().finish();
-    }
+    store_token(&mut transaction, subscriber_id, &subscription_token).await?;
 
     if transaction.commit().await.is_err() {
-        return HttpResponse::InternalServerError().finish();
+        return Ok(HttpResponse::InternalServerError().finish());
     }
 
     if send_confirmation_email(
@@ -84,10 +95,10 @@ pub async fn subscribe(
     .await
     .is_err()
     {
-        return HttpResponse::InternalServerError().finish();
+        return Ok(HttpResponse::InternalServerError().finish());
     }
 
-    HttpResponse::Ok().finish()
+    Ok(HttpResponse::Ok().finish())
 }
 
 #[tracing::instrument(
@@ -98,7 +109,7 @@ pub async fn store_token(
     transaction: &mut Transaction<'_, Postgres>,
     subscriber_id: Uuid,
     subscription_token: &str,
-) -> Result<(), sqlx::Error> {
+) -> Result<(), StoreTokenError> {
     let query = sqlx::query!(
         r#"INSERT INTO subscription_tokens (subscription_token, subscriber_id)
     VALUES ($1, $2)"#,
@@ -106,10 +117,14 @@ pub async fn store_token(
         subscriber_id
     );
 
-    transaction.execute(query).await.map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-        e
-    })?;
+    transaction
+        .execute(query)
+        .await
+        .map_err(|e| {
+            // [...]
+            // Wrapping the underlying error
+            StoreTokenError(e)
+        })?;
     Ok(())
 }
 
@@ -136,6 +151,7 @@ VALUES ($1, $2, $3, $4, 'pending_confirmation')"#,
         tracing::error!("Failed to execute query: {:?}", e);
         e
     })?;
+
     Ok(subscriber_id)
 }
 
@@ -149,16 +165,17 @@ pub async fn send_confirmation_email(
     base_url: &str,
     subscription_token: &str,
 ) -> Result<(), reqwest::Error> {
-    //let confirmation_link = "https://there-is-no-such-domaiggn.com/subscriptions/confirm";
-    //let confirmation_link = format!("{}/subscriptions/confirm", base_url);
+
     let confirmation_link = format!(
         "{}/subscriptions/confirm?subscription_token={}",
         base_url, subscription_token
     );
+
     let plain_body = format!(
         "Welcome to our newsletter!\nVisit {} to confirm your subscription.",
         confirmation_link
     );
+
     let html_body = format!(
         "Welcome to our newsletter!<br />\
 Click <a href=\"{}\">here</a> to confirm your subscription.",

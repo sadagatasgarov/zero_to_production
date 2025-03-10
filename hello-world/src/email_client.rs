@@ -44,7 +44,6 @@ impl EmailClient {
             html_body: html_content,
             text_body: text_content,
         };
-        //--
         let builder = self
             .http_client
             .post(&url)
@@ -56,7 +55,7 @@ impl EmailClient {
             .send()
             .await?
             .error_for_status()?;
-        Ok(()) 
+        Ok(())
     }
 }
 
