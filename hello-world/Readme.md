@@ -59,3 +59,5 @@ export TEST_LOG=true
 cargo t subscribe_fails_if_there_is_a_fatal_database_error | bunyan
 
 ```
+
+sqlx migrate add create_users_table
