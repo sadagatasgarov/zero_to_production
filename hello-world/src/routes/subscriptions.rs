@@ -47,7 +47,7 @@ impl ResponseError for StoreTokenError {}
 pub enum SubscribeError {
     #[error("{0}")]
     ValidationError(String),
-    
+
     #[error(transparent)]
     UnexpectedError(#[from] anyhow::Error),
 }

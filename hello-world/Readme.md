@@ -49,8 +49,8 @@ ulimit -n 10000
 cargo test -- --nocapture
 
 
-8.4.2
-anyhow Or thiserror?
+9.2
+Do Not Spam Unconfirmed Subscribers
 
 
 # sqlx logs are a bit spammy, cutting them out to reduce noise
