@@ -49,8 +49,8 @@ ulimit -n 10000
 cargo test -- --nocapture
 
 
-9.2
-Do Not Spam Unconfirmed Subscribers
+9.8.3 Remove Some Boilerplate
+
 
 
 # sqlx logs are a bit spammy, cutting them out to reduce noise
