@@ -49,7 +49,7 @@ ulimit -n 10000
 cargo test -- --nocapture
 
 
-10.2.2 Password Verification - Naive Approach
+10.2.3 Password Storage
 
 
 # sqlx logs are a bit spammy, cutting them out to reduce noise
