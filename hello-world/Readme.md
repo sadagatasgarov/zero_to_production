@@ -49,9 +49,6 @@ ulimit -n 10000
 cargo test -- --nocapture
 
 
-10.2.3.3
-Preimage Attack
-
 
 # sqlx logs are a bit spammy, cutting them out to reduce noise
 ```
@@ -64,3 +61,5 @@ cargo t subscribe_fails_if_there_is_a_fatal_database_error | bunyan
 sqlx migrate add create_users_table
 
 sqlx migrate add rename_password_column
+
+10.2.5 User Enumeration
