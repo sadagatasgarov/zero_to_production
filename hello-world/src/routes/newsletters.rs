@@ -3,6 +3,7 @@ use std::any;
 use crate::domain::SubscriberEmail;
 use crate::email_client::EmailClient;
 use crate::routes::error_chain_fmt;
+use crate::telemetry::spawn_blocking_with_tracing;
 use actix_web::http::{header, StatusCode};
 use actix_web::{web, HttpResponse, ResponseError};
 use anyhow::Context;
@@ -75,9 +76,8 @@ async fn validate_credentials(
         .map_err(PublishError::UnexpectedError)?
         .ok_or_else(|| PublishError::AuthError(anyhow::anyhow!("Unknown username.")))?;
 
-    let current_span = tracing::Span::current();
-    tokio::task::spawn_blocking(move || {
-        current_span.in_scope(|| verify_password_hash(expected_password_hash, credentials.password))
+    spawn_blocking_with_tracing(move || {
+        verify_password_hash(expected_password_hash, credentials.password)
     })
     .await
     // spawn_blocking is fallible - we have a nested Result here!
