@@ -182,12 +182,12 @@ impl TestUser {
         }
     }
     async fn store(&self, pool: &PgPool) {
-
         let salt = SaltString::generate(&mut rand::thread_rng());
-        
+
         let password_hash = Argon2::default()
-        .hash_password(self.password.as_bytes(), &salt)
-        .unwrap().to_string();
+            .hash_password(self.password.as_bytes(), &salt)
+            .unwrap()
+            .to_string();
 
         sqlx::query!(
             "INSERT INTO users (user_id, username, password_hash)
