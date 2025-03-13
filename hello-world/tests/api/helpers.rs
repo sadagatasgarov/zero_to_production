@@ -189,16 +189,16 @@ impl TestUser {
         //     .unwrap()
         //     .to_string();
 
-            let salt = SaltString::generate(&mut rand::thread_rng());
-            // Match parameters of the default password
-            let password_hash = Argon2::new(
+        let salt = SaltString::generate(&mut rand::thread_rng());
+        // Match parameters of the default password
+        let password_hash = Argon2::new(
             Algorithm::Argon2id,
             Version::V0x13,
             Params::new(15000, 2, 1, None).unwrap(),
-            )
-            .hash_password(self.password.as_bytes(), &salt)
-            .unwrap()
-            .to_string();
+        )
+        .hash_password(self.password.as_bytes(), &salt)
+        .unwrap()
+        .to_string();
 
         sqlx::query!(
             "INSERT INTO users (user_id, username, password_hash)

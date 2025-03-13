@@ -5,7 +5,7 @@ use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 
 use crate::email_client::EmailClient;
-use crate::routes::{confirm, kok_sehife, publish_newsletter};
+use crate::routes::{confirm, home, publish_newsletter};
 
 use super::routes::{health_check, subscribe};
 
@@ -85,7 +85,7 @@ pub fn run(
     let server = HttpServer::new(move || {
         App::new()
             .wrap(TracingLogger::default())
-            .route("/", web::get().to(kok_sehife))
+            .route("/", web::get().to(home))
             .route("/health_check", web::get().to(health_check))
             .route("/subscriptions", web::post().to(subscribe))
             .route("/subscriptions/confirm", web::get().to(confirm))
