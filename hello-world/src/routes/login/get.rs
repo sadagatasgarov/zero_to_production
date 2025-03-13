@@ -5,3 +5,6 @@ pub async fn login_form() -> HttpResponse {
         .content_type(ContentType::html())
         .body(include_str!("login.html"))
 }
+
+
+
