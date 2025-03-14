@@ -96,54 +96,6 @@ impl ResponseError for LoginError {
             .finish()
     }
 
-    // fn error_response(&self) -> HttpResponse {
-    //     let encoded_error = urlencoding::Encoded::new(self.to_string());
-    //     HttpResponse::build(self.status_code())
-    //         .insert_header((LOCATION, format!("/login?error={}", encoded_error)))
-    //         .finish()
-    // }
-
-    // fn error_response(&self) -> HttpResponse {
-    //     HttpResponse::build(self.status_code())
-    //         .insert_header((LOCATION, "/login"))
-    //         .finish()
-    // }
-
-    // fn error_response(&self) -> HttpResponse {
-    //     HttpResponse::build(self.status_code())
-    //         .content_type(ContentType::html())
-    //         .body(format!(
-    //             r#"<!DOCTYPE html>
-    //             <html lang="en">
-    //             <head>
-    //             <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    //             <title>Login</title>
-    //             </head>
-    //             <body>
-    //                 <p><i>{}</i></p>
-    //                 <form action="/login" method="post">
-    //                 <label>Username
-    //                     <input
-    //                         type="text"
-    //                         placeholder="Enter Username"
-    //                         name="username"
-    //                     >
-    //                 </label>
-    //                 <label>Password
-    //                     <input
-    //                         type="password"
-    //                         placeholder="Enter Password"
-    //                         name="password"
-    //                     >
-    //                 </label>
-    //                 <button type="submit">Login</button>
-    //                 </form>
-    //             </body>
-    //             </html>"#,
-    //             self
-    //         ))
-    // }
-
     fn status_code(&self) -> StatusCode {
         match self {
             LoginError::UnexpectedError(_) => StatusCode::INTERNAL_SERVER_ERROR,
