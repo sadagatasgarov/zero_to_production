@@ -34,7 +34,7 @@ pub struct TestApp {
     pub db_pool: PgPool,
     pub email_server: MockServer,
     pub test_user: TestUser,
-    pub api_client: reqwest::Client
+    pub api_client: reqwest::Client,
 }
 
 /// Confirmation links embedded in the request to the email API.
@@ -44,18 +44,16 @@ pub struct ConfirmationLinks {
 }
 
 impl TestApp {
-
     pub async fn get_login_html(&self) -> String {
         self.api_client
-        .get(&format!("{}/login", &self.address))
-        .send()
-        .await
-        .expect("Failed to execute request.")
-        .text()
-        .await
-        .unwrap()
-        }
-
+            .get(&format!("{}/login", &self.address))
+            .send()
+            .await
+            .expect("Failed to execute request.")
+            .text()
+            .await
+            .unwrap()
+    }
 
     pub async fn post_subscriptions(&self, body: String) -> reqwest::Response {
         self.api_client
@@ -148,11 +146,10 @@ pub async fn spawn_app() -> TestApp {
     let _ = tokio::spawn(application.run_until_stopped());
 
     let client = reqwest::Client::builder()
-    .redirect(reqwest::redirect::Policy::none())
-    .cookie_store(true)
-    .build()
-    .unwrap();
-
+        .redirect(reqwest::redirect::Policy::none())
+        .cookie_store(true)
+        .build()
+        .unwrap();
 
     let test_app = TestApp {
         // How do we get these?

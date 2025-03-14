@@ -1,4 +1,6 @@
 use crate::startup::HmacSecret;
+use actix_web::cookie::time::Duration;
+use actix_web::cookie::Cookie;
 use actix_web::http::header::ContentType;
 use actix_web::{web, HttpRequest, HttpResponse};
 use hmac::{Hmac, Mac};
@@ -25,8 +27,7 @@ impl QueryParams {
 pub async fn login_form(
     // query: Option<web::Query<QueryParams>>,
     // secret: web::Data<HmacSecret>,
-        
-    request: HttpRequest
+    request: HttpRequest,
 ) -> HttpResponse {
     // let error_html = match query {
     //     None => "".into(),
@@ -48,11 +49,11 @@ pub async fn login_form(
     let error_html = match request.cookie("_flash") {
         None => "".into(),
         Some(cookie) => {
-        format!("<p><i>{}</i></p>", cookie.value())
+            format!("<p><i>{}</i></p>", cookie.value())
         }
-        };
+    };
 
-    HttpResponse::Ok()
+    let mut response = HttpResponse::Ok()
         .content_type(ContentType::html())
         .body(format!(
             r#"<!DOCTYPE html>
@@ -82,5 +83,10 @@ pub async fn login_form(
         </form>
         </body>
         </html>"#,
-        ))
+        ));
+
+    response
+        .add_removal_cookie(&Cookie::new("_flash", ""))
+        .unwrap();
+    response
 }
