@@ -64,3 +64,6 @@ sqlx migrate add rename_password_column
 
 10.6.3.2
 Rejecting Invalid Credentials buna baslayiriam
+http://localhost:8000/login?error=Your%20account%20has%20been%20locked%2C%20
+please%20submit%20your%20details%20%3Ca%20href%3D%22https%3A%2F%2Fzero2prod.com
+%22%3Ehere%3C%2Fa%3E%20to%20resolve%20the%20issue. xss xeya=tasi var
