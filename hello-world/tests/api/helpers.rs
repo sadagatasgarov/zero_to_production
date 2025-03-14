@@ -223,16 +223,10 @@ impl TestUser {
         Self {
             user_id: Uuid::new_v4(),
             username: Uuid::new_v4().to_string(),
-            password: Uuid::new_v4().to_string(),
+            password: "everythinghastostartsomewhere".into(),
         }
     }
     async fn store(&self, pool: &PgPool) {
-        // let salt = SaltString::generate(&mut rand::thread_rng());
-
-        // let password_hash = Argon2::default()
-        //     .hash_password(self.password.as_bytes(), &salt)
-        //     .unwrap()
-        //     .to_string();
 
         let salt = SaltString::generate(&mut rand::thread_rng());
         // Match parameters of the default password

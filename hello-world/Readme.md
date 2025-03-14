@@ -62,7 +62,7 @@ sqlx migrate add create_users_table
 
 sqlx migrate add rename_password_column
 
-
+sqlx migrate add seed_user
 
 
 
