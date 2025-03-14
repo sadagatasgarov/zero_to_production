@@ -9,6 +9,8 @@ pub mod telemetry;
 
 pub mod authentication;
 
+pub mod session_state;
+
 #[derive(serde::Deserialize)]
 struct FormData {
     email: String,
