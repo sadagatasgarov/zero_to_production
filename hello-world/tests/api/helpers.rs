@@ -15,7 +15,6 @@ use zero2prod::telemetry::{get_subscriber, init_subscriber};
 use sha3::Digest;
 use wiremock::MockServer;
 
-
 static TRACING: Lazy<()> = Lazy::new(|| {
     let default_filter_level = "debug".to_string();
     let subscriber_name = "test".to_string();
@@ -231,8 +230,7 @@ impl TestUser {
     }
 }
 
-
 pub fn assert_is_redirect_to(response: &reqwest::Response, location: &str) {
     assert_eq!(response.status().as_u16(), 303);
     assert_eq!(response.headers().get("Location").unwrap(), location);
-    }
+}
