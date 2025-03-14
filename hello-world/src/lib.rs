@@ -7,6 +7,8 @@ mod routes;
 pub mod startup;
 pub mod telemetry;
 
+pub mod authentication;
+
 #[derive(serde::Deserialize)]
 struct FormData {
     email: String,
