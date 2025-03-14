@@ -7,6 +7,7 @@ use actix_web::error::InternalError;
 use actix_web::http::header::{ContentType, LOCATION};
 use actix_web::HttpResponse;
 use actix_web::{web, ResponseError};
+use actix_web_flash_messages::FlashMessage;
 use hmac::{Hmac, Mac};
 use reqwest::StatusCode;
 use secrecy::ExposeSecret;
@@ -62,9 +63,10 @@ pub async fn login(
             //     ))
             //     .finish();
 
+            FlashMessage::error(e.to_string()).send();
+
             let response = HttpResponse::SeeOther()
                 .insert_header((LOCATION, "/login"))
-                .cookie(Cookie::new("_flash", e.to_string()))
                 .finish();
             Err(InternalError::from_response(e, response))
         }
