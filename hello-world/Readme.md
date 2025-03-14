@@ -62,4 +62,5 @@ sqlx migrate add create_users_table
 
 sqlx migrate add rename_password_column
 
-435
+10.6.3.2
+Rejecting Invalid Credentials buna baslayiriam
