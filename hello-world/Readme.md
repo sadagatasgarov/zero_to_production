@@ -66,5 +66,5 @@ sqlx migrate add rename_password_column
 
 
 
-10.7.5.1
-Redirect On Login Success 484
+10.7.5.4
+Reject Unauthenticated Users 494
