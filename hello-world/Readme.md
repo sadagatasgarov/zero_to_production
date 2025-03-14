@@ -62,4 +62,9 @@ sqlx migrate add create_users_table
 
 sqlx migrate add rename_password_column
 
-10.7 Sessions baslayiriq
+
+
+
+
+10.7.5.1
+Redirect On Login Success 484
